@@ -9,7 +9,7 @@ import pstats
 
 router = APIRouter()
 
-HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/mistralai/Codestral-22B-v0.1"
+HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/deepseek-coder-1.3b-instruct/"
 HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 
 headers = {
