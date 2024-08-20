@@ -12,9 +12,6 @@ router = APIRouter()
 HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/mistralai/Codestral-22B-v0.1"
 HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 
-# Ensure the API token is being read correctly
-print(f"HUGGINGFACE_API_TOKEN: {HUGGINGFACE_API_TOKEN}")
-
 headers = {
     "Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"
 }
@@ -25,8 +22,6 @@ class CodeAnalysisRequest(BaseModel):
 
 def query_huggingface(payload):
     response = requests.post(HUGGINGFACE_API_URL, headers=headers, json=payload)
-    print(f"Response Status Code: {response.status_code}")
-    print(f"Response Text: {response.text}")
     if response.status_code != 200:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -96,15 +91,11 @@ language_support_map = {
     }
 }
 
-@router.post("/analyze")
 async def analyze_code(request: CodeAnalysisRequest):
-    if not request.code or not request.language:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Code or language is missing")
-    payload = {"inputs": request.code}
+    payload = {"inputs": request.code, "language": request.language}
     result = query_huggingface(payload)
     return {"suggestions": result}
 
-@router.post("/complexity")
 async def analyze_code_complexity(request: CodeAnalysisRequest):
     if request.language in language_support_map:
         complexity_function = language_support_map[request.language]["complexity_function"]
@@ -112,23 +103,16 @@ async def analyze_code_complexity(request: CodeAnalysisRequest):
     else:
         return {"complexity_score": "Complexity analysis not supported for this language"}
 
-@router.post("/review")
 async def generate_review_comments(request: CodeAnalysisRequest):
-    if not request.code or not request.language:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Code or language is missing")
-    payload = {"inputs": request.code}
+    payload = {"inputs": request.code, "language": request.language}
     result = query_huggingface(payload)
     return {"comments": result.get("comments", [])}
 
-@router.post("/optimize")
 async def optimize_code(request: CodeAnalysisRequest):
-    if not request.code or not request.language:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Code or language is missing")
-    payload = {"inputs": request.code}
+    payload = {"inputs": request.code, "language": request.language}
     result = query_huggingface(payload)
     return {"optimized_code": result.get("optimized_code", "")}
 
-@router.post("/profile")
 async def profile_code_performance(request: CodeAnalysisRequest):
     if request.language in language_support_map:
         profile_function = language_support_map[request.language]["profile_function"]
