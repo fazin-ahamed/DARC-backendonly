@@ -7,25 +7,26 @@ import cProfile
 import io
 import pstats
 
-router = APIRouter()
 
-HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/deepseek-coder-1.3b-instruct/"
-HUGGINGFACE_API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
+
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_API_TOKEN = os.getenv("OPENROUTER_API_TOKEN")
 
 headers = {
-    "Authorization": f"Bearer {HUGGINGFACE_API_TOKEN}"
+    "Authorization": f"Bearer {OPENROUTER_API_TOKEN}",
+    "messages": [{ "role": "system", "content": "You are a Full-Stack Developer experienced with many coding languages and you like helping optimize, preprocess and analyze code and give suggestions. But make sure when replying just give a straight reply without any messages at the start like 'Here is your suggestions'."}]
 }
 
 class CodeAnalysisRequest(BaseModel):
     code: str
     language: str
 
-def query_huggingface(payload):
-    response = requests.post(HUGGINGFACE_API_URL, headers=headers, json=payload)
+def query_openrouter(payload):
+    response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload)
     if response.status_code != 200:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error while connecting to Hugging Face API"
+            detail="Error while connecting to Open Router API"
         )
     return response.json()
 
@@ -92,9 +93,15 @@ language_support_map = {
 }
 
 async def analyze_code(request: CodeAnalysisRequest):
-    payload = {"inputs": request.code, "language": request.language}
-    result = query_huggingface(payload)
-    return {"suggestions": result}
+    prompt = f"Analyze this {request.code} and optimize the code only without any other introductions or any ending notes."
+    payload = {
+        "model": "meta-llama/llama-3.1-8b-instruct:free",  
+        "message": [
+            { "role": "user", "content": prompt}
+        ]
+    }
+    result = query_openrouter(payload)
+    return {"suggestions": result.get("choices", [{}])[0].get("text", "").strip()}
 
 async def analyze_code_complexity(request: CodeAnalysisRequest):
     if request.language in language_support_map:
@@ -104,9 +111,14 @@ async def analyze_code_complexity(request: CodeAnalysisRequest):
         return {"complexity_score": "Complexity analysis not supported for this language"}
 
 async def generate_review_comments(request: CodeAnalysisRequest):
-    payload = {"inputs": request.code, "language": request.language}
-    result = query_huggingface(payload)
-    return {"comments": result.get("comments", [])}
+    prompt = f"Give comments on this code: {request.code} and optimize the code only without any other introductions or any ending notes."
+    payload = {
+        "model": "meta-llama/llama-3.1-8b-instruct:free",
+        "message": [
+            { "role": "user", "content": prompt}
+        ]
+    }
+    result = query_openrouter(payload)
 
 async def optimize_code(request: CodeAnalysisRequest):
     payload = {"inputs": request.code, "language": request.language}
