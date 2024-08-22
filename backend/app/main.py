@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import dashboard
+import os
 
 load_dotenv()  # Load environment variables
 
@@ -12,7 +13,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",  # Local development
     "https://darc-frontend.vercel.app/",  # Vercel frontend domain
-    "https://darc-endless.onrender.com"  # Render backend domain
+    os.getenv("NEXT_PUBLIC_BACKEND_URL")  # Render backend domain
 ]
 
 app.add_middleware(
