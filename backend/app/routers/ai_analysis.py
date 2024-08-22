@@ -10,7 +10,7 @@ import pstats
 
 
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_TOKEN = os.getenv("OPENROUTER_API_TOKEN")
+OPENROUTER_API_TOKEN = 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
 
 headers = {
     "Authorization": f"Bearer {OPENROUTER_API_TOKEN}"
