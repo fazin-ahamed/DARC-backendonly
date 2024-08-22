@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from .ai_old import (
+from .ai_analysis import (
     analyze_code,
     analyze_code_complexity,
     generate_review_comments,
