@@ -23,9 +23,16 @@ class CodeAnalysisRequest(BaseModel):
 def query_openrouter(payload):
     response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload)
     if response.status_code != 200:
+        try:
+            error_detail = response.json()
+        except ValueError:
+            error_detail = response.text  # Fallback to raw text if JSON parsing fails
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error while connecting to Open Router API"
+            status_code=response.status_code,
+            detail={
+                "message": "Error while connecting to OpenRouter API",
+                "response": error_detail
+            }
         )
     return response.json()
 
