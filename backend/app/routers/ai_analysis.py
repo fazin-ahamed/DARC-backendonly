@@ -121,7 +121,7 @@ async def generate_review_comments(request: CodeAnalysisRequest):
     return {"comments": result.get("choices", [{}])[0].get("text", "").strip()}
     
 async def optimize_code(request: CodeAnalysisRequest):
-    prompt = "Give comments on this code: {request.code} without any other introductions or any ending notes."
+    prompt = f"Give comments on this code: {request.code} without any other introductions or any ending notes."
     payload = {
         "model": "meta-llama/llama-3.1-8b-instruct:free",
         "messages": [
