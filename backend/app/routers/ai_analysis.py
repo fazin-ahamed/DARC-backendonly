@@ -118,7 +118,7 @@ async def analyze_code(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"suggestions": result.get("choices", [{}])[0].get("text", "").strip()}
+    return {"suggestions": result}
 
 async def analyze_code_complexity(request: CodeAnalysisRequest):
     if request.language in language_support_map:
@@ -142,7 +142,7 @@ async def generate_review_comments(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"comments": result.get("choices", [{}])[0].get("text", "").strip()}
+    return {"comments": result}
     
 async def optimize_code(request: CodeAnalysisRequest):
     payload = {
@@ -159,7 +159,7 @@ async def optimize_code(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"optimized_code": result.get("choices", [{}])[0].get("text", "").strip()}
+    return {"optimized_code": result}
 
 async def profile_code_performance(request: CodeAnalysisRequest):
     if request.language in language_support_map:
