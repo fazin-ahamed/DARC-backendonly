@@ -13,8 +13,7 @@ OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_API_TOKEN = os.getenv("OPENROUTER_API_TOKEN")
 
 headers = {
-    "Authorization": f"Bearer {OPENROUTER_API_TOKEN}",
-    "messages": [{ "role": "system", "content": "You are a Full-Stack Developer experienced with many coding languages and you like helping optimize, preprocess and analyze code and give suggestions. But make sure when replying just give a straight reply without any messages at the start like 'Here is your suggestions'."}]
+    "Authorization": f"Bearer {OPENROUTER_API_TOKEN}"
 }
 
 class CodeAnalysisRequest(BaseModel):
