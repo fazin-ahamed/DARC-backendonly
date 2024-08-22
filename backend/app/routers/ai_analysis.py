@@ -6,6 +6,7 @@ import radon.complexity as radon_complexity
 import cProfile
 import io
 import pstats
+import autopep8
 
 
 
@@ -40,6 +41,17 @@ def query_openrouter(payload):
         )
     
     return suggestion_content
+
+def reformat_code(code: str) -> str:
+    try:
+        # Use autopep8 to format the code string
+        formatted_code = autopep8.fix_code(code)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error formatting code: {str(e)}"
+        )
+    return formatted_code
 
 def analyze_python_complexity(code):
     complexity = radon_complexity.cc_visit(code)
@@ -159,7 +171,8 @@ async def optimize_code(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"optimized_code": result}
+    formatted_result = reformat_code(result)
+    return {"optimized_code": formatted_result}
 
 async def profile_code_performance(request: CodeAnalysisRequest):
     if request.language in language_support_map:
