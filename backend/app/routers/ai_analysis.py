@@ -23,18 +23,23 @@ class CodeAnalysisRequest(BaseModel):
 def query_openrouter(payload):
     response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload)
     if response.status_code != 200:
-        try:
-            error_detail = response.json()
-        except ValueError:
-            error_detail = response.text  # Fallback to raw text if JSON parsing fails
         raise HTTPException(
-            status_code=response.status_code,
-            detail={
-                "message": "Error while connecting to OpenRouter API",
-                "response": error_detail
-            }
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"{response.status_code}: {response.json()}"
         )
-    return response.json()
+    
+    response_json = response.json()
+    
+    # Extract the suggestion from the API response
+    try:
+        suggestion_content = response_json["choices"][0]["message"]["content"]
+    except (KeyError, IndexError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error parsing response: {str(e)}"
+        )
+    
+    return suggestion_content
 
 def analyze_python_complexity(code):
     complexity = radon_complexity.cc_visit(code)
@@ -99,11 +104,17 @@ language_support_map = {
 }
 
 async def analyze_code(request: CodeAnalysisRequest):
-    prompt = f"Analyze this {request.code} without any other introductions or any ending notes."
     payload = {
         "model": "meta-llama/llama-3.1-8b-instruct:free",  
         "messages": [
-            { "role": "user", "content": prompt}
+            {
+                "role": "system", 
+                "content": "Analyze this code and give me suggestions only without any other introductions or any ending notes, not even here are the suggestions or even here are your comments. Make sure there are multiple suggestions"
+            },
+            { 
+                "role": "user", 
+                "content": request.code
+            }
         ]
     }
     result = query_openrouter(payload)
@@ -117,22 +128,34 @@ async def analyze_code_complexity(request: CodeAnalysisRequest):
         return {"complexity_score": "Complexity analysis not supported for this language"}
 
 async def generate_review_comments(request: CodeAnalysisRequest):
-    prompt = f"Give comments on this code: {request.code} without any other introductions or any ending notes."
     payload = {
-        "model": "meta-llama/llama-3.1-8b-instruct:free",
+        "model": "meta-llama/llama-3.1-8b-instruct:free",  
         "messages": [
-            { "role": "user", "content": prompt}
+            {
+                "role": "system", 
+                "content": "Analyze this code and give me comments only without any other introductions or any ending notes, not even here are the suggestions or here are your comments. Make sure there are multiple comments"
+            },
+            { 
+                "role": "user", 
+                "content": request.code
+            }
         ]
     }
     result = query_openrouter(payload)
     return {"comments": result.get("choices", [{}])[0].get("text", "").strip()}
     
 async def optimize_code(request: CodeAnalysisRequest):
-    prompt = f"Give comments on this code: {request.code} without any other introductions or any ending notes."
     payload = {
-        "model": "meta-llama/llama-3.1-8b-instruct:free",
+        "model": "meta-llama/llama-3.1-8b-instruct:free",  
         "messages": [
-            { "role": "user", "content": prompt}
+            {
+                "role": "system", 
+                "content": "Optimize this code only without any other introductions or any ending notes, not even here are the suggestions or here is your code"
+            },
+            { 
+                "role": "user", 
+                "content": request.code
+            }
         ]
     }
     result = query_openrouter(payload)
