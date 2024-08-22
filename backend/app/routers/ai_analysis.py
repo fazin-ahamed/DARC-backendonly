@@ -7,6 +7,7 @@ import cProfile
 import io
 import pstats
 import autopep8
+import re
 
 
 
@@ -52,6 +53,18 @@ def reformat_code(code: str) -> str:
             detail=f"Error formatting code: {str(e)}"
         )
     return formatted_code
+
+def reformat_text(raw_text: str) -> str:
+    # Replaces '\n' with spaces
+    formatted_text = raw_text.replace('\\n', ' ')
+    
+    # Replaces double backslashes with single backslash
+    formatted_text = formatted_text.replace('\\\\', '\\')
+    
+    # Removes extra spaces
+    formatted_text = re.sub(r'\s+', ' ', formatted_text).strip()
+    
+    return formatted_text
 
 def analyze_python_complexity(code):
     complexity = radon_complexity.cc_visit(code)
@@ -130,7 +143,8 @@ async def analyze_code(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"suggestions": result}
+    formatted_result = reformat_text(result)
+    return {"suggestions": formatted_result}
 
 async def analyze_code_complexity(request: CodeAnalysisRequest):
     if request.language in language_support_map:
@@ -154,7 +168,8 @@ async def generate_review_comments(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-    return {"comments": result}
+    formatted_result = reformat_text(result)
+    return {"comments": formatted_result}
     
 async def optimize_code(request: CodeAnalysisRequest):
     payload = {
