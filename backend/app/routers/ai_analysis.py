@@ -93,7 +93,7 @@ language_support_map = {
 }
 
 async def analyze_code(request: CodeAnalysisRequest):
-    prompt = f"Analyze this {request.code} and optimize the code only without any other introductions or any ending notes."
+    prompt = f"Analyze this {request.code} without any other introductions or any ending notes."
     payload = {
         "model": "meta-llama/llama-3.1-8b-instruct:free",  
         "message": [
@@ -111,7 +111,7 @@ async def analyze_code_complexity(request: CodeAnalysisRequest):
         return {"complexity_score": "Complexity analysis not supported for this language"}
 
 async def generate_review_comments(request: CodeAnalysisRequest):
-    prompt = f"Give comments on this code: {request.code} and optimize the code only without any other introductions or any ending notes."
+    prompt = f"Give comments on this code: {request.code} without any other introductions or any ending notes."
     payload = {
         "model": "meta-llama/llama-3.1-8b-instruct:free",
         "message": [
@@ -119,11 +119,18 @@ async def generate_review_comments(request: CodeAnalysisRequest):
         ]
     }
     result = query_openrouter(payload)
-
+    return {"comments": result.get("choices", [{}])[0].get("text", "").strip()}
+    
 async def optimize_code(request: CodeAnalysisRequest):
-    payload = {"inputs": request.code, "language": request.language}
-    result = query_huggingface(payload)
-    return {"optimized_code": result.get("optimized_code", "")}
+    prompt = f"Give comments on this code: {request.code} without any other introductions or any ending notes."
+    payload = {
+        "model": "meta-llama/llama-3.1-8b-instruct:free",
+        "message": [
+            { "role": "user", "content": prompt}
+        ]
+    }
+    result = query_openrouter(payload)
+    return {"optimized_code": result.get("choices", [{}])[0].get("text", "").strip()}
 
 async def profile_code_performance(request: CodeAnalysisRequest):
     if request.language in language_support_map:
