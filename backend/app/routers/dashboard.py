@@ -35,7 +35,7 @@ async def analyze_code_complexity_endpoint(request: CodeRequest):
 async def review_code_endpoint(request: CodeRequest):
     try:
         comments = await generate_review_comments(request)
-        return {"comments": comments}
+        return comments
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -51,6 +51,6 @@ async def profile_code_endpoint(request: CodeRequest):
 async def optimize_code_endpoint(request: CodeRequest):
     try:
         optimized_code = await optimize_code(request)
-        return {"optimized_code": optimized_code}
+        return optimized_code
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
