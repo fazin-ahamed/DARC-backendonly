@@ -13,7 +13,7 @@ OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_API = os.getenv("OPENROUTER_API_TOKEN")
 
 headers = {
-    "Authorization": f"Bearer {OPENROUTER_API}"
+    "Authorization": f"Bearer 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"
 }
 
 class CodeAnalysisRequest(BaseModel):
