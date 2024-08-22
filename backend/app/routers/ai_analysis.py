@@ -67,15 +67,20 @@ def reformat_text(raw_text: str) -> str:
     return formatted_text
 
 def analyze_python_complexity(code):
-    complexity = radon_complexity.cc_visit(code)
+
+    formatted_code = reformat_code(code)
+    complexity = radon_complexity.cc_visit(formatted_code)
     complexity_score = sum([c.complexity for c in complexity])
     return complexity_score
 
 def profile_python_code(code):
+
+    formatted_code = reformat_code(code)
+    
     profiler = cProfile.Profile()
     profiler.enable()
     try:
-        exec(code)
+        exec(formatted_code)
     except Exception as e:
         return f"Error executing code: {e}"
     finally:
