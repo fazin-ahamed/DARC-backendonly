@@ -9,16 +9,9 @@ load_dotenv()  # Load environment variables
 
 app = FastAPI()
 
-# Set up CORS
-origins = [
-    "http://localhost:3000",  # Local development
-    "https://darc-frontend.vercel.app/",  # Vercel frontend domain
-    os.getenv("NEXT_PUBLIC_BACKEND_URL")  # Render backend domain
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
