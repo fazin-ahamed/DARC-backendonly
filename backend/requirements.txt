@@ -5,3 +5,4 @@ pyngrok
 sqlalchemy
 python-dotenv
 radon
+requests
