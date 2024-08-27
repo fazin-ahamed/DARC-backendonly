@@ -4,8 +4,4 @@ pydantic
 pyngrok
 sqlalchemy
 python-dotenv
-tensorflow  # For AI models
-matplotlib   # For plotting
-transformers
-torch
 radon
