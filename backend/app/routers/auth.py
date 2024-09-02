@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List
 
-router = APIRouter()
+routers = APIRouter()
 
 class User(BaseModel):
     username: str
