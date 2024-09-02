@@ -1,14 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from dotenv import load_dotenv
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import dashboard
+from routers import dashboard, collab, chat, auth
 import os
-
-load_dotenv()  # Load environment variables
 
 app = FastAPI()
 
+# Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,11 +14,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include the dashboard router
-app.include_router(dashboard.routers)
-
+# Include routers
+app.include_router(dashboard.router)
+app.include_router(collab.router)
+app.include_router(chat.router)
+app.include_router(auth.router)
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the DARC API"}
 
+# WebSocket endpoint for collaborative editing
+@app.websocket("/ws/{session_id}")
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    await collab.connect(websocket, session_id)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await collab.broadcast(session_id, data)
+    except WebSocketDisconnect:
+        await collab.disconnect(websocket, session_id)
