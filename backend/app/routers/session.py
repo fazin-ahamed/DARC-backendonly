@@ -13,7 +13,7 @@ async def create_session():
     return {"session_id": session_id}
 
 @routers.post("/join-session")
-async def join_session(session_id: str = Body(...)):
+async def join_session(session_id: str = Body(..., embed=True)):
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     return {"session_id": session_id}
