@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import dashboard, collab, chat, auth
+from .routers import dashboard, collab, chat, auth, session
 import os
 
 app = FastAPI()
@@ -19,7 +19,7 @@ app.include_router(dashboard.routers)
 app.include_router(collab.routers)
 app.include_router(chat.routers)
 app.include_router(auth.routers)
-app.include_router(session.router, prefix="/sessions")
+app.include_router(session.routers, prefix="/sessions")
 
 @app.get("/")
 def read_root():
