@@ -15,10 +15,10 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(dashboard.router)
-app.include_router(collab.router)
-app.include_router(chat.router)
-app.include_router(auth.router)
+app.include_router(dashboard.routers)
+app.include_router(collab.routers)
+app.include_router(chat.routers)
+app.include_router(auth.routers)
 
 @app.get("/")
 def read_root():
