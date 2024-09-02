@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket
 from typing import List, Dict
 
-router = APIRouter()
+routers = APIRouter()
 
 # Store sessions and connected users
 active_connections: Dict[str, List[WebSocket]] = {}
