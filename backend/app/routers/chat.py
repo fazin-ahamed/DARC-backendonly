@@ -1,7 +1,7 @@
 from fastapi import APIRouter, WebSocket
 from typing import Dict, List
 
-router = APIRouter()
+routers = APIRouter()
 
 chat_connections: Dict[str, List[WebSocket]] = {}
 
