@@ -19,6 +19,7 @@ app.include_router(dashboard.routers)
 app.include_router(collab.routers)
 app.include_router(chat.routers)
 app.include_router(auth.routers)
+app.include_router(session.router, prefix="/sessions")
 
 @app.get("/")
 def read_root():
