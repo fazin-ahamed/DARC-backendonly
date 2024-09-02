@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Body
 import uuid
 
 routers = APIRouter()
@@ -13,7 +13,7 @@ async def create_session():
     return {"session_id": session_id}
 
 @routers.post("/join-session")
-async def join_session(session_id: str):
+async def join_session(session_id: str = Body(...)):
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
     return {"session_id": session_id}
