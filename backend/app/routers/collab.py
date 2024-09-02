@@ -1,22 +1,26 @@
-from fastapi import APIRouter, WebSocket
-from typing import List, Dict
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from typing import Dict
 
 routers = APIRouter()
 
-# Store sessions and connected users
-active_connections: Dict[str, List[WebSocket]] = {}
+# Store WebSocket connections by session_id
+connections: Dict[str, list] = {}
 
-async def connect(websocket: WebSocket, session_id: str):
+@routers.websocket("/ws/{session_id}")
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    if session_id not in connections:
+        connections[session_id] = []
+
     await websocket.accept()
-    if session_id not in active_connections:
-        active_connections[session_id] = []
-    active_connections[session_id].append(websocket)
+    connections[session_id].append(websocket)
 
-async def disconnect(websocket: WebSocket, session_id: str):
-    active_connections[session_id].remove(websocket)
-    if not active_connections[session_id]:
-        del active_connections[session_id]
-
-async def broadcast(session_id: str, message: str):
-    for connection in active_connections[session_id]:
-        await connection.send_text(message)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            for connection in connections[session_id]:
+                if connection != websocket:
+                    await connection.send_text(data)
+    except WebSocketDisconnect:
+        connections[session_id].remove(websocket)
+        if not connections[session_id]:
+            del connections[session_id]
