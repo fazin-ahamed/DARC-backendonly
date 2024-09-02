@@ -18,8 +18,8 @@ app.add_middleware(
 app.include_router(dashboard.routers)
 app.include_router(chat.routers)
 app.include_router(auth.routers)
-app.include_router(session.routers, prefix="/sessions")
-app.include_router(collab.routers, prefix="/collaboration")
+app.include_router(session.routers)
+app.include_router(collab.routers)
 
 @app.get("/")
 def read_root():
