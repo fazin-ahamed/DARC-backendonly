@@ -139,7 +139,7 @@ async def analyze_code(request: CodeAnalysisRequest):
         "messages": [
             {
                 "role": "system", 
-                "content": "Analyze this code and give me suggestions only without any other introductions or any ending notes, not even here are the suggestions or even here are your comments. Make sure there are multiple suggestions"
+                "content": "Analyze this code and give me suggestions only without any other introductions or any ending notes, not even here are the suggestions or even here are your comments. Make sure there are multiple suggestions, dont put it in a code block only text without anythng straightforward"
             },
             { 
                 "role": "user", 
@@ -164,7 +164,7 @@ async def generate_review_comments(request: CodeAnalysisRequest):
         "messages": [
             {
                 "role": "system", 
-                "content": "Analyze this code and give me comments only without any other introductions or any ending notes, not even here are the suggestions or here are your comments. Make sure there are multiple comments"
+                "content": "Analyze this code and give me comments only without any other introductions or any ending notes, not even here are the suggestions or here are your comments. Make sure there are multiple comments, dont put it in a code block only text without anythng straightforward"
             },
             { 
                 "role": "user", 
@@ -182,11 +182,12 @@ async def optimize_code(request: CodeAnalysisRequest):
         "messages": [
             {
                 "role": "system", 
-                "content": "Optimize this code only without any other introductions or any ending notes, not even here are the suggestions or here is your code"
+                "content": "Optimize this code only without any other introductions or any ending notes, not even here are the suggestions or here is your code, dont put it in a code block only text without anythng straightforward"
             },
             { 
                 "role": "user", 
-                "content": request.code
+                "content": request.code,
+                "temperature": 0
             }
         ]
     }
