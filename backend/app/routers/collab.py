@@ -17,10 +17,12 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     try:
         while True:
             data = await websocket.receive_text()
+            # Broadcast received data to all clients in the same session
             for connection in connections[session_id]:
                 if connection != websocket:
                     await connection.send_text(data)
     except WebSocketDisconnect:
         connections[session_id].remove(websocket)
+        # Remove session if no clients are connected
         if not connections[session_id]:
             del connections[session_id]
