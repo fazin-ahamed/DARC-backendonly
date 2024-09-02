@@ -17,7 +17,7 @@ roles_permissions = {
     "developer": ["edit", "view"]
 }
 
-@router.post("/login")
+@routers.post("/login")
 def login(user: User):
     if user.username in users and users[user.username] == user.password:
         return {"status": "success", "message": f"Welcome, {user.username}!"}
