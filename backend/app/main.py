@@ -5,10 +5,16 @@ import os
 
 app = FastAPI()
 
+allowed_origins = [
+    "https://example1.com",
+    "https://example2.com",
+    "https://darc-frontend.netlify.app"
+]
+
 # Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://darc-frontend.netlify.app, https://darc.tecnivohub.com"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
