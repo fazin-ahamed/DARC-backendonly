@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from routers import dashboard, collab, chat, auth
+from .routers import dashboard, collab, chat, auth
 import os
 
 app = FastAPI()
