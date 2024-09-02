@@ -8,7 +8,7 @@ app = FastAPI()
 # Enable CORS for frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://darc-frontend.netlify.app"],
+    allow_origins=["https://darc-frontend.netlify.app, https://darc.tecnivohub.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
