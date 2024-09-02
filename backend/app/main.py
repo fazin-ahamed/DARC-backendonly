@@ -6,7 +6,7 @@ import os
 app = FastAPI()
 
 allowed_origins = [
-    "https://darc.tecnivohub.com/",
+    "https://darc.tecnivohub.com",
     "https://darc-frontend.netlify.app"
 ]
 
