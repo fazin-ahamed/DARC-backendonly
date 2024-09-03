@@ -182,7 +182,7 @@ async def optimize_code(request: CodeAnalysisRequest):
         "messages": [
             {
                 "role": "system", 
-                "content": "Optimize the following code and output only the optimized code in plain text: [insert code here]."
+                "content": "Optimize the following code and output only the optimized code in plain text: [insert code here]. without any other context"
             },
             { 
                 "role": "user", 
